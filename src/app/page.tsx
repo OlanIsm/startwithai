@@ -1,16 +1,27 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Check, Circle, FileText, GitBranch, LoaderCircle, Radio, RotateCcw, Sparkles } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  FileText,
+  GitBranch,
+  LoaderCircle,
+  RotateCcw,
+  Sparkles,
+  PlusCircle,
+  FolderGit2,
+  Lock,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { ChatInput } from "@/components/chat/ChatInput";
+import RuixenMoonChat from "@/components/ui/ruixen-moon-chat";
 import { ChatMessage } from "@/components/chat/ChatMessage";
 import { QuestionCard } from "@/components/questions/QuestionCard";
 import { QuestionStepper } from "@/components/questions/QuestionStepper";
 import { useAppStore } from "@/lib/store/useAppStore";
 import type { ProductQuestion, SessionData, WorkflowGraph } from "@/types";
 
-type Stage = "idea" | "loading_questions" | "questions" | "building";
+type Stage = "select_mode" | "idea" | "loading_questions" | "questions" | "building";
 
 interface WorkflowResponse {
   sessionId?: string;
@@ -24,7 +35,7 @@ interface WorkflowResponse {
 export default function HomePage() {
   const router = useRouter();
   const store = useAppStore();
-  const [stage, setStage] = useState<Stage>("idea");
+  const [stage, setStage] = useState<Stage>("select_mode");
   const [error, setError] = useState<string | null>(null);
   const inSummary = store.questions.length > 0 && store.currentQuestion === store.questions.length;
   const current = store.questions[store.currentQuestion];
@@ -91,69 +102,140 @@ export default function HomePage() {
   const restart = () => {
     store.reset();
     setError(null);
-    setStage("idea");
+    setStage("select_mode");
   };
 
   return (
-    <main className="landing-shell">
+    <main className="landing-shell min-h-screen">
       <nav className="landing-nav" aria-label="Main navigation">
-        <a href="#top" className="brand" aria-label="CodeWithAI home">
+        <button
+          type="button"
+          onClick={restart}
+          className="brand bg-transparent border-0 cursor-pointer p-0 text-left"
+          aria-label="CodeWithAI home"
+        >
           <span className="brand-port"><span /></span>
           <span>CodeWithAI</span>
-        </a>
+        </button>
         <div className="nav-status"><span /> Built for agentic workflows</div>
       </nav>
 
-      <div id="top" className="landing-main">
-        {stage === "idea" && (
-          <div className="idea-stage">
-            <section className="hero-copy">
-              <h1>Turn a loose idea into a buildable system.</h1>
-              <p>
-                Answer a few decisions. Get a dependency map, an agent-ready PRD, and a live view of the work as it ships.
-              </p>
-              <div className="flow-proof" aria-label="CodeWithAI product flow">
-                <div><Sparkles size={17} /><span><b>Idea</b><small>your raw prompt</small></span></div>
-                <span className="flow-line" />
-                <div><GitBranch size={17} /><span><b>Plan</b><small>ordered dependencies</small></span></div>
-                <span className="flow-line active" />
-                <div><Radio size={17} /><span><b>Ship</b><small>live agent telemetry</small></span></div>
-              </div>
-            </section>
+      <div id="top" className="landing-main flex-1 flex flex-col">
+        {/* Step 1: Selection Mode (Start New Project vs Import Project) */}
+        {stage === "select_mode" && (
+          <div className="w-full max-w-5xl mx-auto px-6 py-16 sm:py-24 flex flex-col items-center justify-center text-center">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-medium mb-6">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Agentic Project Workspace</span>
+            </div>
 
-            <section className="signal-board" aria-label="Illustrative workflow preview">
-              <div className="board-head"><span>Example signal path</span><span>Live preview</span></div>
-              <div className="board-grid">
-                <div className="demo-node node-a"><span className="demo-port">SET-01</span><b>Product schema</b><small><Check size={12} /> done</small></div>
-                <div className="demo-node node-b"><span className="demo-port">API-02</span><b>Core endpoints</b><small><Radio size={12} /> in progress</small></div>
-                <div className="demo-node node-c"><span className="demo-port">UI-03</span><b>Client surfaces</b><small><Circle size={12} /> pending</small></div>
-                <svg className="demo-wires" viewBox="0 0 620 330" preserveAspectRatio="none" aria-hidden="true">
-                  <path d="M155 76 C250 76 225 163 310 163" />
-                  <path d="M390 163 C470 163 445 257 535 257" />
-                  <circle cx="310" cy="163" r="3" />
-                </svg>
-              </div>
-              <div className="board-foot"><span>3 phases</span><span>8 dependencies traced</span><span><i /> stream connected</span></div>
-            </section>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white max-w-2xl leading-tight">
+              How would you like to start?
+            </h1>
+            <p className="mt-4 text-base sm:text-lg text-neutral-400 max-w-xl">
+              Create an AI-guided architectural plan from scratch, or connect an existing codebase to generate telemetry.
+            </p>
 
-            <section className="composer-area">
-              <ChatInput onSubmit={requestQuestions} />
-              {error && <div className="inline-error" role="alert">{error}</div>}
-            </section>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl mt-12 text-left">
+              {/* Option 1: Start a New Project */}
+              <button
+                type="button"
+                onClick={() => setStage("idea")}
+                className="group relative flex flex-col justify-between p-7 rounded-2xl border border-cyan-500/40 bg-gradient-to-b from-[#0f172a]/90 to-[#090d16]/90 hover:border-cyan-400/80 hover:shadow-[0_0_30px_rgba(6,182,212,0.15)] transition-all duration-300 text-left cursor-pointer"
+              >
+                <div className="flex items-start justify-between w-full mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-cyan-500/15 border border-cyan-500/30 flex items-center justify-center text-cyan-400 group-hover:scale-105 transition-transform">
+                    <PlusCircle className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 font-medium">
+                    Recommended
+                  </span>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold text-white group-hover:text-cyan-300 transition-colors">
+                    Start a New Project
+                  </h2>
+                  <p className="mt-2 text-sm text-neutral-400 leading-relaxed">
+                    Brainstorm your app idea with our AI chat, configure technical decisions, and get an interactive dependency graph with an exportable PRD.
+                  </p>
+                </div>
+
+                <div className="mt-8 flex items-center gap-2 text-sm font-medium text-cyan-400 group-hover:text-cyan-300">
+                  <span>Start with AI Chat</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </button>
+
+              {/* Option 2: Import Project (Coming Soon) */}
+              <div className="relative flex flex-col justify-between p-7 rounded-2xl border border-neutral-800 bg-neutral-900/40 opacity-75 select-none text-left">
+                <div className="flex items-start justify-between w-full mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-neutral-800/80 border border-neutral-700/60 flex items-center justify-center text-neutral-400">
+                    <FolderGit2 className="w-6 h-6" />
+                  </div>
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-neutral-800 text-neutral-400 border border-neutral-700 flex items-center gap-1 font-medium">
+                    <Lock className="w-3 h-3" /> Coming Soon
+                  </span>
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold text-neutral-200">
+                    Import Existing Project
+                  </h2>
+                  <p className="mt-2 text-sm text-neutral-400 leading-relaxed">
+                    Import a GitHub repo or local folder to automatically extract existing architecture, generate tests, and connect companion CLI telemetry.
+                  </p>
+                </div>
+
+                <div className="mt-8 flex items-center gap-2 text-sm font-medium text-neutral-500">
+                  <span>Available in upcoming release</span>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* Step 2: AI Chat View (Ruixen Moon Chat Design) */}
+        {stage === "idea" && (
+          <div className="w-full flex-1 flex flex-col">
+            {error && (
+              <div className="max-w-3xl mx-auto w-full px-4 pt-4">
+                <div className="p-3 bg-red-500/15 border border-red-500/40 rounded-xl text-red-200 text-sm flex items-center justify-between">
+                  <span>{error}</span>
+                  <button
+                    type="button"
+                    onClick={() => setError(null)}
+                    className="text-xs text-red-300 hover:text-white underline cursor-pointer"
+                  >
+                    Dismiss
+                  </button>
+                </div>
+              </div>
+            )}
+            <RuixenMoonChat
+              title="What are you building?"
+              subtitle="Describe your idea or technical requirements. We'll map dependencies and build your PRD."
+              initialMessage={store.idea}
+              showBackButton={true}
+              onBack={() => setStage("select_mode")}
+              onSubmit={requestQuestions}
+            />
+          </div>
+        )}
+
+        {/* Step 3: Loading Questions */}
         {stage === "loading_questions" && (
-          <section className="question-workspace loading-workspace" aria-live="polite">
+          <section className="question-workspace loading-workspace flex-1" aria-live="polite">
             <div className="thinking-mark"><LoaderCircle className="spin" size={22} /></div>
             <h1>Finding the decisions that matter.</h1>
-            <p>We’re reading your idea and removing questions that won’t change the build.</p>
+            <p>We’re analyzing your prompt and extracting the core technical specifications.</p>
             <div className="question-skeleton"><span /><span /><span /></div>
           </section>
         )}
 
+        {/* Step 4: Questions & Building Canvas */}
         {(stage === "questions" || stage === "building") && (
-          <section className="question-workspace">
+          <section className="question-workspace flex-1">
             <div className="question-context">
               <button className="text-button" type="button" onClick={restart}><RotateCcw size={14} /> Start over</button>
               <ChatMessage role="user">{store.idea}</ChatMessage>
