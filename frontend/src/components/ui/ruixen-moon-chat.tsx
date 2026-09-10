@@ -17,6 +17,7 @@ import {
   Rocket,
   LoaderCircle,
   ArrowLeft,
+  Sparkles,
 } from "lucide-react";
 
 interface AutoResizeProps {
@@ -69,7 +70,7 @@ const QUICK_ACTIONS = [
   { icon: <Code2 className="w-4 h-4" />, label: "Generate Code", prompt: "I want to build a full-stack dashboard with Next.js and Prisma" },
   { icon: <Rocket className="w-4 h-4" />, label: "Launch App", prompt: "A lightweight SaaS starter kit with auth, billing, and landing page" },
   { icon: <Layers className="w-4 h-4" />, label: "UI Components", prompt: "An accessible design system with React, Tailwind, and Radix UI" },
-  { icon: <Palette className="w-4 h-4" />, label: "Theme Ideas", prompt: "A dark-mode first portfolio with obsidian and cyan accents" },
+  { icon: <Palette className="w-4 h-4" />, label: "Theme Ideas", prompt: "An off-white and vivid orange light theme with warm accents" },
   { icon: <CircleUserRound className="w-4 h-4" />, label: "User Dashboard", prompt: "A customer analytics dashboard with real-time charts and activity log" },
   { icon: <MonitorIcon className="w-4 h-4" />, label: "Landing Page", prompt: "A high-conversion developer tools landing page with live interactive playground" },
   { icon: <FileUp className="w-4 h-4" />, label: "Upload Docs", prompt: "A documentation engine with markdown search, syntax highlighting, and API references" },
@@ -89,7 +90,7 @@ export default function RuixenMoonChat({
   const [message, setMessage] = useState(initialMessage);
   const { textareaRef, adjustHeight } = useAutoResizeTextarea({
     minHeight: 48,
-    maxHeight: 180,
+    maxHeight: 140,
   });
 
   const canSubmit = message.trim().length > 0 && !isLoading;
@@ -119,44 +120,59 @@ export default function RuixenMoonChat({
 
   return (
     <div
-      className="relative w-full min-h-screen bg-cover bg-center flex flex-col items-center justify-between px-4 py-8 bg-[#070b14]"
+      className="relative w-screen h-screen max-h-screen overflow-hidden flex flex-col items-center justify-between px-4 sm:px-6 py-5 sm:py-6 bg-[#F6F6F6] select-none"
       style={{
         backgroundImage:
-          "radial-gradient(ellipse at top, rgba(30, 45, 75, 0.4) 0%, rgba(5, 8, 16, 0.95) 75%), url('https://cdn.21st.dev/assets/mirror/c3/c333918af688a4a8a3d004652e6c0ee219457a9d84d380eeb31f513d4b59a09f.png')",
-        backgroundAttachment: "fixed",
-        backgroundSize: "cover",
+          "radial-gradient(ellipse 90% 55% at 50% -8%, rgba(254, 141, 1, 0.22) 0%, rgba(235, 92, 0, 0.10) 40%, rgba(246, 246, 246, 0) 100%), radial-gradient(circle at 50% 0%, rgba(254, 141, 1, 0.15) 0%, rgba(246, 246, 246, 1) 75%)",
       }}
     >
-      {/* Top Bar / Back button */}
-      <div className="w-full max-w-4xl flex items-center justify-between pt-2">
+      {/* Top Sunrise Arc Line */}
+      <div
+        className="absolute top-0 left-1/2 -translate-x-1/2 w-[130vw] sm:w-[110vw] h-[280px] pointer-events-none rounded-[100%] border-b border-[#FE8D01]/30 shadow-[0_8px_32px_rgba(254,141,1,0.18)]"
+        aria-hidden="true"
+      />
+
+      {/* Top Bar / Navigation */}
+      <header className="w-full max-w-6xl flex items-center justify-between z-10">
         {showBackButton && onBack ? (
-          <Button
+          <button
             type="button"
-            variant="ghost"
             onClick={onBack}
-            className="flex items-center gap-2 text-neutral-300 hover:text-white hover:bg-white/10 rounded-full px-4"
+            className="group flex items-center gap-2 text-[#5A5A5A] hover:text-[#B23904] bg-white/80 hover:bg-white border border-[#E8E5E1] hover:border-[#FE8D01]/50 rounded-full px-4 py-1.5 shadow-xs transition-all cursor-pointer"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
             <span className="text-sm font-medium">Back to options</span>
-          </Button>
+          </button>
         ) : (
-          <div />
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FE8D01] shadow-[0_0_8px_#FE8D01]" />
+            <span className="font-bold text-[#1A1A1A]">CodeWithAI</span>
+          </div>
         )}
-      </div>
+
+        <div className="flex items-center gap-2 text-xs font-medium text-[#5A5A5A] bg-white/80 border border-[#E8E5E1] px-3.5 py-1.5 rounded-full shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-[#FE8D01] shadow-[0_0_6px_#FE8D01]" />
+          <span>Agentic Workflow</span>
+        </div>
+      </header>
 
       {/* Centered AI Title */}
-      <div className="flex-1 w-full flex flex-col items-center justify-center my-12 text-center">
-        <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight text-white drop-shadow-md">
+      <div className="flex-1 w-full flex flex-col items-center justify-center my-4 text-center z-10">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#FE8D01]/30 bg-[#FE8D01]/10 text-[#EB5C00] text-xs font-semibold mb-4 shadow-xs">
+          <Sparkles className="w-3.5 h-3.5 text-[#FE8D01]" />
+          <span>Intelligent System Architecture</span>
+        </div>
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#1A1A1A]">
           {title}
         </h1>
-        <p className="mt-3 text-base sm:text-lg text-neutral-300 max-w-xl">
+        <p className="mt-3 text-base sm:text-lg text-[#5A5A5A] max-w-xl font-normal leading-relaxed">
           {subtitle}
         </p>
       </div>
 
       {/* Input Box Section */}
-      <div className="w-full max-w-3xl mb-12">
-        <div className="relative bg-neutral-950/75 backdrop-blur-xl rounded-2xl border border-neutral-700/60 shadow-2xl focus-within:border-neutral-500 transition-colors">
+      <div className="w-full max-w-3xl mb-4 sm:mb-6 z-10">
+        <div className="relative bg-white/90 backdrop-blur-xl rounded-2xl border border-[#E8E2DD] shadow-[0_12px_36px_-6px_rgba(235,92,0,0.12),0_4px_12px_rgba(0,0,0,0.03)] focus-within:border-[#FE8D01] focus-within:ring-2 focus-within:ring-[#FE8D01]/20 transition-all">
           <Textarea
             ref={textareaRef}
             value={message}
@@ -169,7 +185,7 @@ export default function RuixenMoonChat({
             placeholder={placeholder}
             className={cn(
               "w-full px-5 py-4 resize-none border-none",
-              "bg-transparent text-white text-base leading-relaxed",
+              "bg-transparent text-[#1A1A1A] text-base leading-relaxed",
               "focus-visible:ring-0 focus-visible:ring-offset-0",
               "placeholder:text-neutral-400 min-h-[56px]"
             )}
@@ -177,13 +193,13 @@ export default function RuixenMoonChat({
           />
 
           {/* Footer Buttons */}
-          <div className="flex items-center justify-between px-4 py-3 border-t border-neutral-800/60">
+          <div className="flex items-center justify-between px-4 py-2.5 border-t border-[#F0EBE7]">
             <div className="flex items-center gap-1">
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="text-neutral-400 hover:text-white hover:bg-neutral-800/80 rounded-lg w-9 h-9"
+                className="text-neutral-400 hover:text-[#EB5C00] hover:bg-[#FFF5EC] rounded-lg w-8 h-8"
                 title="Attach file (mocked)"
               >
                 <Paperclip className="w-4 h-4" />
@@ -191,7 +207,7 @@ export default function RuixenMoonChat({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-xs text-neutral-500 hidden sm:inline mr-1">
+              <span className="text-xs text-neutral-400 hidden sm:inline mr-1">
                 Press Enter ↵ to send
               </span>
               <Button
@@ -201,15 +217,15 @@ export default function RuixenMoonChat({
                 className={cn(
                   "flex items-center justify-center rounded-xl px-4 py-2 transition-all duration-200",
                   canSubmit
-                    ? "bg-white text-black hover:bg-neutral-200 cursor-pointer shadow-md"
-                    : "bg-neutral-800 text-neutral-500 cursor-not-allowed opacity-70"
+                    ? "bg-[#FE8D01] hover:bg-[#EB5C00] text-white shadow-md shadow-[#FE8D01]/25 cursor-pointer"
+                    : "bg-[#ECE7E3] text-neutral-400 cursor-not-allowed opacity-70"
                 )}
                 aria-label="Send prompt"
               >
                 {isLoading ? (
-                  <LoaderCircle className="w-4 h-4 animate-spin text-neutral-400" />
+                  <LoaderCircle className="w-4 h-4 animate-spin text-white" />
                 ) : (
-                  <ArrowUpIcon className="w-4 h-4" />
+                  <ArrowUpIcon className="w-4 h-4 stroke-[2.5]" />
                 )}
                 <span className="sr-only">Send</span>
               </Button>
@@ -218,7 +234,7 @@ export default function RuixenMoonChat({
         </div>
 
         {/* Quick Actions */}
-        <div className="flex items-center justify-center flex-wrap gap-2.5 mt-6">
+        <div className="flex items-center justify-center flex-wrap gap-2 mt-4 sm:mt-5">
           {QUICK_ACTIONS.map((action) => (
             <QuickAction
               key={action.label}
@@ -245,9 +261,9 @@ function QuickAction({ icon, label, onClick }: QuickActionProps) {
       type="button"
       variant="outline"
       onClick={onClick}
-      className="flex items-center gap-2 rounded-full border-neutral-800/80 bg-neutral-900/60 backdrop-blur text-neutral-300 hover:text-white hover:bg-neutral-800 hover:border-neutral-600 transition-all text-xs py-1.5 px-3.5 h-auto shadow-sm"
+      className="flex items-center gap-1.5 rounded-full border border-[#E6E0DA] bg-white/80 backdrop-blur text-[#3A3A3A] hover:text-[#B23904] hover:border-[#FE8D01] hover:bg-[#FFF9F4] transition-all text-xs py-1.5 px-3 h-auto shadow-2xs"
     >
-      {icon}
+      <span className="text-[#FE8D01]">{icon}</span>
       <span>{label}</span>
     </Button>
   );
