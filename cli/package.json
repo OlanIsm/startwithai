@@ -1,0 +1,22 @@
+{
+  "name": "codewithai",
+  "version": "1.0.0",
+  "description": "CodeWithAI CLI Companion - Telemetry hook for AI coding agents",
+  "main": "bin/index.js",
+  "bin": {
+    "codewithai": "./bin/index.js"
+  },
+  "keywords": [
+    "codewithai",
+    "telemetry",
+    "ai-agent",
+    "workflow",
+    "canvas"
+  ],
+  "author": "CodeWithAI",
+  "license": "MIT",
+  "dependencies": {
+    "commander": "^12.1.0",
+    "picocolors": "^1.1.1"
+  }
+}
