@@ -253,9 +253,9 @@ export default function HomePage() {
             We’re analyzing your prompt and extracting the core technical specifications.
           </p>
           <div className="flex gap-2 mt-8">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FE8D01] animate-bounce" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EB5C00] animate-bounce [animation-delay:0.15s]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#B23904] animate-bounce [animation-delay:0.3s]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#FE8D01] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#EB5C00] animate-pulse [animation-delay:0.2s]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#B23904] animate-pulse [animation-delay:0.4s]" />
           </div>
         </div>
       )}
