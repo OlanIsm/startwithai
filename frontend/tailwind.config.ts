@@ -10,10 +10,12 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          offwhite: '#F6F6F6',
-          vivid: '#FE8D01',
-          deep: '#EB5C00',
-          rust: '#B23904',
+          base: '#050508',
+          surface: 'rgba(255, 255, 255, 0.04)',
+          primary: '#2563EB',
+          glow: '#3B82F6',
+          light: '#60A5FA',
+          muted: '#93C5FD',
         },
       },
     },

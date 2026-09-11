@@ -24,10 +24,13 @@ export function useSessionStream(sessionId: string | null) {
 
     let disposed = false;
     let pollingTimer: ReturnType<typeof setInterval> | undefined;
-    const applyPayload = (payload: StatusEvent) => {
-      if (payload.session) hydrateSession(payload.session);
-      const nodeId = payload.stepId ?? payload.nodeId ?? payload.updatedNode?.id;
-      const status = payload.status ?? payload.updatedNode?.status;
+    const applyPayload = (payload: any) => {
+      const session = payload.session ?? payload.data?.session;
+      if (session) hydrateSession(session);
+
+      const node = payload.data?.node ?? payload.updatedNode ?? payload.node;
+      const nodeId = payload.stepId ?? payload.nodeId ?? node?.id;
+      const status = payload.status ?? node?.status;
       if (nodeId && status) updateNodeStatus(nodeId, status);
     };
 

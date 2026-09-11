@@ -12,15 +12,17 @@ import {
 } from './prompts';
 import { layoutGraph } from '../utils/layoutGraph';
 
-const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-const modelName = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
-
-let genAI: GoogleGenerativeAI | null = null;
-if (apiKey) {
+function getGenAI(): { client: GoogleGenerativeAI; model: string } | null {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
+  if (!apiKey || apiKey === 'your_gemini_api_key_here' || apiKey.trim() === '') {
+    return null;
+  }
+  const model = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
   try {
-    genAI = new GoogleGenerativeAI(apiKey);
+    return { client: new GoogleGenerativeAI(apiKey), model };
   } catch (err) {
     console.warn('[GeminiClient] Could not initialize GoogleGenerativeAI:', err);
+    return null;
   }
 }
 
@@ -342,13 +344,14 @@ npx codewithai update <step-id> --session ${sessionId} --status done --notes "St
  * Generate adaptive 3-5 technical multiple choice questions using Gemini API.
  */
 export async function generateQuestionsWithGemini(idea: string): Promise<Question[]> {
-  if (!genAI) {
+  const ai = getGenAI();
+  if (!ai) {
     return getFallbackQuestions(idea);
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: modelName,
+    const model = ai.client.getGenerativeModel({
+      model: ai.model,
       systemInstruction: QUESTIONS_SYSTEM_PROMPT,
       generationConfig: {
         responseMimeType: 'application/json',
@@ -379,13 +382,14 @@ export async function generateWorkflowWithGemini(
   answers: Record<string, any>,
   sessionId: string
 ): Promise<{ appName: string; graph: WorkflowGraph }> {
-  if (!genAI) {
+  const ai = getGenAI();
+  if (!ai) {
     return getFallbackWorkflow(idea, answers, sessionId);
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: modelName,
+    const model = ai.client.getGenerativeModel({
+      model: ai.model,
       systemInstruction: WORKFLOW_SYSTEM_PROMPT,
       generationConfig: {
         responseMimeType: 'application/json',
@@ -457,13 +461,14 @@ export async function generatePrdWithGemini(
   graph: WorkflowGraph,
   sessionId: string
 ): Promise<string> {
-  if (!genAI) {
+  const ai = getGenAI();
+  if (!ai) {
     return getFallbackPrd(idea, answers, graph, sessionId);
   }
 
   try {
-    const model = genAI.getGenerativeModel({
-      model: modelName,
+    const model = ai.client.getGenerativeModel({
+      model: ai.model,
       systemInstruction: PRD_SYSTEM_PROMPT,
       generationConfig: {
         temperature: 0.3,

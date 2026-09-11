@@ -134,6 +134,21 @@ async function runTests() {
   }
   console.log('  POST /api/ai/prd -> Status 200 OK');
 
+  // PRD Route with only sessionId (Canvas openPrd flow)
+  const pReq2 = new NextRequest('http://localhost:3000/api/ai/prd', {
+    method: 'POST',
+    body: JSON.stringify({
+      sessionId: wData.sessionId,
+    }),
+    headers: { 'Content-Type': 'application/json' },
+  });
+  const pRes2 = await prdHandler(pReq2);
+  const pData2 = await pRes2.json();
+  if (pRes2.status !== 200 || !pData2.markdown) {
+    throw new Error('PRD API route handler failed when called with only sessionId');
+  }
+  console.log('  POST /api/ai/prd (only sessionId) -> Status 200 OK');
+
   // Session Update Route
   const firstNodeId = wData.graph.nodes[0].id;
   const uReq = new NextRequest('http://localhost:3000/api/session/update', {

@@ -27,6 +27,7 @@ interface AppState {
   answerQuestion: (questionId: string, answer: Answer) => void;
   setCurrentQuestion: (index: number) => void;
   setSessionId: (id: string) => void;
+  setAppName: (appName: string) => void;
   setGraph: (graph: WorkflowGraph) => void;
   setNodes: (nodes: WorkflowNode[]) => void;
   setEdges: (edges: WorkflowEdge[]) => void;
@@ -56,6 +57,7 @@ export const useAppStore = create<AppState>((set) => ({
     set((state) => ({ answers: { ...state.answers, [questionId]: answer } })),
   setCurrentQuestion: (currentQuestion) => set({ currentQuestion }),
   setSessionId: (sessionId) => set({ sessionId }),
+  setAppName: (appName) => set({ appName }),
   setGraph: (graph) => set({ nodes: graph.nodes, edges: graph.edges }),
   setNodes: (nodes) => set({ nodes }),
   setEdges: (edges) => set({ edges }),

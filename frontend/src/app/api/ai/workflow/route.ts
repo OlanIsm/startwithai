@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     );
 
     // Save session into store
-    sessionStore.upsertSession(sessionId, {
+    const session = sessionStore.upsertSession(sessionId, {
       id: sessionId,
       appName,
       rawPrompt: body.idea.trim(),
@@ -37,6 +37,7 @@ export async function POST(request: NextRequest) {
       sessionId,
       appName,
       graph,
+      session,
     };
 
     return NextResponse.json(response);

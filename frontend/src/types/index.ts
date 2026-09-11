@@ -83,16 +83,20 @@ export interface WorkflowResponse {
   sessionId: string;
   appName: string;
   graph: WorkflowGraph;
+  session?: SessionData;
+  prdMarkdown?: string;
 }
 
 export interface PrdRequest {
-  idea: string;
-  answers: Record<string, string | string[]>;
-  graph?: WorkflowGraph;
   sessionId?: string;
+  idea?: string;
+  answers?: Record<string, string | string[]>;
+  graph?: WorkflowGraph;
+  regenerate?: boolean;
 }
 
 export interface PrdResponse {
   sessionId: string;
   markdown: string;
+  prdMarkdown?: string;
 }

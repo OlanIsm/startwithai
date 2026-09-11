@@ -5,11 +5,16 @@ import RuixenMoonChat from "@/components/ui/ruixen-moon-chat";
 
 export default function DemoPage() {
   return (
-    <main className="w-screen h-screen max-h-screen overflow-hidden bg-[#F6F6F6] text-[#1A1A1A] flex flex-col justify-between select-none">
-      {/* Chat Component Fullscreen */}
-      <section className="flex-1 w-full h-full overflow-hidden">
+    <main className="min-h-screen w-full bg-[#050508] text-[#F0F0F5]">
+      {/* Chat Component */}
+      <section className="flex justify-center items-start w-full">
         <RuixenMoonChat />
       </section>
+
+      {/* Footer */}
+      <footer className="text-center text-[#55556A] py-2 mt-10 border-t border-white/[0.06] text-sm">
+        © {new Date().getFullYear()} CodeWithAI Demo Page
+      </footer>
     </main>
   );
 }

@@ -20,8 +20,18 @@ export default function CanvasPage() {
   const [prdLoading, setPrdLoading] = useState(false);
   const connection = useSessionStream(sessionId);
 
+  const storeSessionId = store.sessionId;
+  const nodesCount = store.nodes.length;
+  const hydrateSession = store.hydrateSession;
+  const storeIdea = store.idea;
+  const storeAnswers = store.answers;
+  const storeNodes = store.nodes;
+  const storeEdges = store.edges;
+  const storePrdMarkdown = store.prdMarkdown;
+  const setPrdMarkdown = store.setPrdMarkdown;
+
   useEffect(() => {
-    if (store.sessionId === sessionId && store.nodes.length > 0) {
+    if (storeSessionId === sessionId && nodesCount > 0) {
       setLoading(false);
       return;
     }
@@ -31,7 +41,7 @@ export default function CanvasPage() {
         const response = await fetch(`/api/session/${sessionId}`, { cache: "no-store" });
         if (!response.ok) throw new Error("This workflow session could not be loaded.");
         const payload = (await response.json()) as SessionData | { session: SessionData };
-        if (active) store.hydrateSession("session" in payload ? payload.session : payload);
+        if (active) hydrateSession("session" in payload ? payload.session : payload);
       } catch (requestError) {
         if (active) setError(requestError instanceof Error ? requestError.message : "Session unavailable.");
       } finally {
@@ -40,7 +50,7 @@ export default function CanvasPage() {
     };
     void load();
     return () => { active = false; };
-  }, [sessionId, store]);
+  }, [sessionId, storeSessionId, nodesCount, hydrateSession]);
 
   const counts = useMemo(() => ({
     done: store.nodes.filter((node) => node.data.status === "done").length,
@@ -50,7 +60,7 @@ export default function CanvasPage() {
   const progress = store.nodes.length ? Math.round((counts.done / store.nodes.length) * 100) : 0;
 
   const openPrd = useCallback(async () => {
-    if (store.prdMarkdown) {
+    if (storePrdMarkdown) {
       setPrdOpen(true);
       return;
     }
@@ -60,20 +70,28 @@ export default function CanvasPage() {
       const response = await fetch("/api/ai/prd", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ sessionId }),
+        body: JSON.stringify({
+          sessionId,
+          idea: storeIdea,
+          answers: storeAnswers,
+          graph: storeNodes.length > 0 ? { nodes: storeNodes, edges: storeEdges } : undefined,
+        }),
       });
-      if (!response.ok) throw new Error("The PRD could not be generated.");
+      if (!response.ok) {
+        const errPayload = (await response.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errPayload?.error || "The PRD could not be generated.");
+      }
       const payload = (await response.json()) as { prdMarkdown?: string; markdown?: string };
       const markdown = payload.prdMarkdown ?? payload.markdown;
       if (!markdown) throw new Error("The generated PRD was empty.");
-      store.setPrdMarkdown(markdown);
+      setPrdMarkdown(markdown);
       setPrdOpen(true);
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "The PRD could not be generated.");
     } finally {
       setPrdLoading(false);
     }
-  }, [sessionId, store]);
+  }, [sessionId, storePrdMarkdown, storeIdea, storeAnswers, storeNodes, storeEdges, setPrdMarkdown]);
 
   if (loading) {
     return (

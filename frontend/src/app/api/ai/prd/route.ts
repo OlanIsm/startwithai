@@ -8,24 +8,37 @@ export async function POST(request: NextRequest) {
   try {
     const body: PrdRequest = await request.json();
 
-    if (!body || typeof body.idea !== 'string' || !body.idea.trim()) {
+    const sessionId = body?.sessionId || `sess_${nanoid(10)}`;
+    const existingSession = sessionStore.getSession(sessionId);
+
+    // If session already has generated PRD and caller did not request regeneration, return immediately!
+    if (existingSession?.prdMarkdown && existingSession.prdMarkdown.trim().length > 0 && !body?.regenerate) {
+      const response: PrdResponse = {
+        sessionId,
+        markdown: existingSession.prdMarkdown,
+        prdMarkdown: existingSession.prdMarkdown,
+      };
+      return NextResponse.json(response);
+    }
+
+    // Resolve idea from body or existing session
+    const idea = (body?.idea || existingSession?.rawPrompt || '').trim();
+    if (!idea) {
       return NextResponse.json(
-        { error: 'Invalid payload: "idea" is required and must be a non-empty string.' },
+        { error: 'Invalid payload: "idea" or a valid "sessionId" with an active session is required.' },
         { status: 400 }
       );
     }
 
-    const sessionId = body.sessionId || `sess_${nanoid(10)}`;
-    const answers = body.answers || {};
+    const answers = body?.answers || existingSession?.answers || {};
 
-    let graph = body.graph;
-    if (!graph) {
-      const existingSession = sessionStore.getSession(sessionId);
+    let graph = body?.graph;
+    if (!graph || !graph.nodes || graph.nodes.length === 0) {
       if (existingSession && existingSession.graph?.nodes?.length > 0) {
         graph = existingSession.graph;
       } else {
         const workflowResult = await generateWorkflowWithGemini(
-          body.idea.trim(),
+          idea,
           answers,
           sessionId
         );
@@ -34,7 +47,7 @@ export async function POST(request: NextRequest) {
     }
 
     const markdown = await generatePrdWithGemini(
-      body.idea.trim(),
+      idea,
       answers,
       graph,
       sessionId
@@ -43,7 +56,8 @@ export async function POST(request: NextRequest) {
     // Persist PRD markdown in session
     sessionStore.upsertSession(sessionId, {
       id: sessionId,
-      rawPrompt: body.idea.trim(),
+      appName: existingSession?.appName || idea.slice(0, 35).trim(),
+      rawPrompt: idea,
       answers,
       graph,
       prdMarkdown: markdown,
@@ -52,6 +66,7 @@ export async function POST(request: NextRequest) {
     const response: PrdResponse = {
       sessionId,
       markdown,
+      prdMarkdown: markdown,
     };
 
     return NextResponse.json(response);

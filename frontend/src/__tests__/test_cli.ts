@@ -91,7 +91,7 @@ const server = http.createServer(async (req, res) => {
 server.listen(3456, async () => {
   console.log('Mock server listening on port 3456');
 
-  const cliBin = path.resolve(__dirname, '../../cli/bin/index.js');
+  const cliBin = path.resolve(__dirname, '../../../cli/bin/index.js');
 
   function runCli(args: string[]): Promise<string> {
     return new Promise((resolve, reject) => {

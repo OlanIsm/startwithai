@@ -7,7 +7,6 @@ import {
   GitBranch,
   LoaderCircle,
   RotateCcw,
-  Sparkles,
   PlusCircle,
   FolderGit2,
   Lock,
@@ -31,6 +30,8 @@ interface WorkflowResponse {
   prdMarkdown?: string;
   session?: SessionData;
 }
+
+
 
 export default function HomePage() {
   const router = useRouter();
@@ -86,6 +87,7 @@ export default function HomePage() {
       if (session) store.hydrateSession(session);
       else {
         store.setSessionId(sessionId);
+        if (payload.appName) store.setAppName(payload.appName);
         store.setGraph({
           nodes: graph.nodes.map((node) => ({ ...node, type: "customStep" as const })),
           edges: graph.edges,
@@ -106,100 +108,100 @@ export default function HomePage() {
   };
 
   return (
-    <main className="w-screen h-screen max-h-screen overflow-hidden bg-[#F6F6F6] text-[#1A1A1A] flex flex-col justify-between select-none">
-      {/* View 1: Selection Mode (Start New Project vs Import Project) */}
+    <main className="w-screen h-screen max-h-screen overflow-hidden bg-[#050508] text-[#F0F0F5] flex flex-col justify-between select-none">
+      {/* Animated wave background image */}
+      <div className="page-bg" aria-hidden="true" />
+
+      {/* ============================================================
+          View 1: Select Mode
+          ============================================================ */}
       {stage === "select_mode" && (
-        <div className="w-full h-full flex flex-col justify-between px-6 py-6 sm:py-8 relative overflow-hidden"
-          style={{
-            backgroundImage:
-              "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(254, 141, 1, 0.18) 0%, rgba(246, 246, 246, 0) 100%)",
-          }}
-        >
-          {/* Top Nav */}
-          <nav className="w-full max-w-6xl mx-auto flex items-center justify-between" aria-label="Main navigation">
+        <div className="w-full h-full flex flex-col justify-between px-6 py-6 sm:py-8 relative overflow-hidden">
+
+          {/* Navigation */}
+          <nav className="w-full max-w-6xl mx-auto flex items-center justify-between z-10" aria-label="Main navigation">
             <button
               type="button"
               onClick={restart}
               className="flex items-center gap-2.5 bg-transparent border-0 cursor-pointer p-0 text-left"
               aria-label="CodeWithAI home"
             >
-              <div className="w-7 h-7 rounded-lg bg-[#FE8D01]/15 border border-[#FE8D01]/40 flex items-center justify-center">
-                <span className="w-2 h-2 rounded-full bg-[#FE8D01] shadow-[0_0_8px_#FE8D01]" />
+              <div className="w-7 h-7 rounded-lg bg-[#2563EB]/15 border border-[#2563EB]/40 flex items-center justify-center">
+                <span className="w-2 h-2 rounded-full bg-[#2563EB] shadow-[0_0_8px_rgba(37,99,235,0.6)]" />
               </div>
-              <span className="font-bold text-lg text-[#1A1A1A] tracking-tight">CodeWithAI</span>
+              <span className="font-bold text-lg text-[#F0F0F5] tracking-tight">CodeWithAI</span>
             </button>
-            <div className="flex items-center gap-2 text-xs font-medium text-[#5A5A5A] bg-white border border-[#E8E5E1] px-3.5 py-1.5 rounded-full shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-[#FE8D01] shadow-[0_0_6px_#FE8D01]" />
+            <div className="flex items-center gap-2 text-xs font-medium text-[#8A8A9A] liquid-glass-sm px-3.5 py-1.5 rounded-full border border-white/[0.08]">
+              <span className="w-2 h-2 rounded-full bg-[#2563EB] shadow-[0_0_6px_rgba(37,99,235,0.5)]" />
               <span>Built for agentic workflows</span>
             </div>
           </nav>
 
-          {/* Central Cards Selection */}
-          <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center my-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#FE8D01]/30 bg-[#FE8D01]/10 text-[#EB5C00] text-xs font-semibold mb-5 shadow-2xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#FE8D01]" />
+          {/* Central Content */}
+          <div className="w-full max-w-4xl mx-auto flex flex-col items-center justify-center text-center my-auto z-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#2563EB]/30 bg-[#2563EB]/10 text-[#60A5FA] text-xs font-semibold mb-5">
               <span>Agentic Project Workspace</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#1A1A1A] max-w-2xl leading-tight">
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#F0F0F5] max-w-2xl leading-tight">
               How would you like to start?
             </h1>
-            <p className="mt-3 text-sm sm:text-base text-[#5A5A5A] max-w-lg">
+            <p className="mt-3 text-sm sm:text-base text-[#8A8A9A] max-w-lg">
               Create an AI-guided architectural plan from scratch, or connect an existing codebase to generate telemetry.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl mt-8 sm:mt-10 text-left">
-              {/* Option 1: Start a New Project */}
+              {/* Card 1: Start New */}
               <button
                 type="button"
                 onClick={() => setStage("idea")}
-                className="group relative flex flex-col justify-between p-6 rounded-2xl border-2 border-[#FE8D01]/50 bg-white hover:border-[#FE8D01] hover:shadow-[0_12px_32px_-8px_rgba(254,141,1,0.22)] transition-all duration-200 text-left cursor-pointer"
+                className="group relative flex flex-col justify-between p-6 rounded-2xl liquid-glass border border-white/[0.08] hover:border-[#2563EB]/50 hover:shadow-[0_12px_32px_-8px_rgba(37,99,235,0.2)] transition-all duration-200 text-left cursor-pointer"
               >
                 <div className="flex items-start justify-between w-full mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#FE8D01]/15 border border-[#FE8D01]/30 flex items-center justify-center text-[#EB5C00] group-hover:scale-105 transition-transform">
+                  <div className="w-11 h-11 rounded-xl bg-[#2563EB]/12 border border-[#2563EB]/25 flex items-center justify-center text-[#60A5FA] group-hover:scale-105 transition-transform">
                     <PlusCircle className="w-5 h-5 stroke-[2.2]" />
                   </div>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#FE8D01]/15 text-[#EB5C00] border border-[#FE8D01]/30 font-semibold">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#2563EB]/12 text-[#60A5FA] border border-[#2563EB]/25 font-semibold">
                     Recommended
                   </span>
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-[#1A1A1A] group-hover:text-[#EB5C00] transition-colors">
+                  <h2 className="text-lg font-bold text-[#F0F0F5] group-hover:text-[#60A5FA] transition-colors">
                     Start a New Project
                   </h2>
-                  <p className="mt-1.5 text-xs sm:text-sm text-[#5A5A5A] leading-relaxed">
+                  <p className="mt-1.5 text-xs sm:text-sm text-[#8A8A9A] leading-relaxed">
                     Brainstorm your app idea with our AI chat, configure technical decisions, and get an interactive dependency graph with an exportable PRD.
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-[#EB5C00] group-hover:text-[#B23904]">
+                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-[#60A5FA] group-hover:text-[#93C5FD]">
                   <span>Start with AI Chat</span>
                   <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform stroke-[2.2]" />
                 </div>
               </button>
 
-              {/* Option 2: Import Project (Coming Soon) */}
-              <div className="relative flex flex-col justify-between p-6 rounded-2xl border border-[#E2DDD8] bg-white/60 opacity-80 select-none text-left">
+              {/* Card 2: Import (Coming Soon) */}
+              <div className="relative flex flex-col justify-between p-6 rounded-2xl liquid-glass border border-white/[0.05] opacity-60 select-none text-left">
                 <div className="flex items-start justify-between w-full mb-4">
-                  <div className="w-11 h-11 rounded-xl bg-[#ECE7E3] border border-[#DDD7D1] flex items-center justify-center text-neutral-500">
+                  <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-[#55556A]">
                     <FolderGit2 className="w-5 h-5 stroke-[2]" />
                   </div>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-[#EAE5E1] text-neutral-600 border border-[#DDD7D1] flex items-center gap-1 font-medium">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-white/[0.04] text-[#55556A] border border-white/[0.06] flex items-center gap-1 font-medium">
                     <Lock className="w-3 h-3" /> Coming Soon
                   </span>
                 </div>
 
                 <div>
-                  <h2 className="text-lg font-bold text-neutral-700">
+                  <h2 className="text-lg font-bold text-[#8A8A9A]">
                     Import Existing Project
                   </h2>
-                  <p className="mt-1.5 text-xs sm:text-sm text-neutral-500 leading-relaxed">
+                  <p className="mt-1.5 text-xs sm:text-sm text-[#55556A] leading-relaxed">
                     Import a GitHub repo or local folder to automatically extract existing architecture, generate tests, and connect companion CLI telemetry.
                   </p>
                 </div>
 
-                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-neutral-400">
+                <div className="mt-6 flex items-center gap-1.5 text-xs font-semibold text-[#55556A]">
                   <span>Available in upcoming release</span>
                 </div>
               </div>
@@ -207,23 +209,25 @@ export default function HomePage() {
           </div>
 
           {/* Footer */}
-          <footer className="w-full text-center text-xs text-[#8E8E93] py-2">
+          <footer className="w-full text-center text-xs text-[#55556A] py-2 z-10">
             © {new Date().getFullYear()} CodeWithAI • Continuous telemetry & PRD synthesis
           </footer>
         </div>
       )}
 
-      {/* View 2: Fullscreen Ruixen Moon Chat (Light Orange & Off-White) */}
+      {/* ============================================================
+          View 2: Chat (Idea Input)
+          ============================================================ */}
       {stage === "idea" && (
         <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col relative">
           {error && (
             <div className="absolute top-16 left-1/2 -translate-x-1/2 max-w-lg w-full px-4 z-50">
-              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-center justify-between shadow-md">
+              <div className="p-3 liquid-glass-sm border border-red-500/30 rounded-xl text-red-300 text-sm flex items-center justify-between">
                 <span>{error}</span>
                 <button
                   type="button"
                   onClick={() => setError(null)}
-                  className="text-xs text-red-600 hover:text-red-800 font-semibold underline cursor-pointer ml-3"
+                  className="text-xs text-red-400 hover:text-red-200 font-semibold underline cursor-pointer ml-3"
                 >
                   Dismiss
                 </button>
@@ -242,49 +246,55 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* View 3: Loading Questions */}
+      {/* ============================================================
+          View 3: Loading Questions
+          ============================================================ */}
       {stage === "loading_questions" && (
-        <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col items-center justify-center text-center px-4 bg-[#F6F6F6]">
-          <div className="w-12 h-12 rounded-2xl bg-[#FE8D01]/15 border border-[#FE8D01]/30 flex items-center justify-center text-[#EB5C00] mb-5 shadow-xs">
-            <LoaderCircle className="w-6 h-6 animate-spin text-[#EB5C00]" />
+        <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col items-center justify-center text-center px-4 bg-[#050508] relative">
+
+          <div className="w-12 h-12 rounded-2xl bg-[#2563EB]/12 border border-[#2563EB]/25 flex items-center justify-center text-[#60A5FA] mb-5 z-10">
+            <LoaderCircle className="w-6 h-6 animate-spin text-[#3B82F6]" />
           </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A]">Finding the decisions that matter.</h1>
-          <p className="mt-2 text-sm sm:text-base text-[#5A5A5A] max-w-md">
-            We’re analyzing your prompt and extracting the core technical specifications.
+          <h1 className="text-2xl sm:text-3xl font-bold text-[#F0F0F5] z-10">Finding the decisions that matter.</h1>
+          <p className="mt-2 text-sm sm:text-base text-[#8A8A9A] max-w-md z-10">
+            We&apos;re analyzing your prompt and extracting the core technical specifications.
           </p>
-          <div className="flex gap-2 mt-8">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FE8D01] animate-pulse" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EB5C00] animate-pulse [animation-delay:0.2s]" />
-            <span className="w-2.5 h-2.5 rounded-full bg-[#B23904] animate-pulse [animation-delay:0.4s]" />
+          <div className="flex gap-2 mt-8 z-10">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB] animate-pulse" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6] animate-pulse [animation-delay:0.2s]" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#60A5FA] animate-pulse [animation-delay:0.4s]" />
           </div>
         </div>
       )}
 
-      {/* View 4: Questions & Building Canvas */}
+      {/* ============================================================
+          View 4: Questions & Building
+          ============================================================ */}
       {(stage === "questions" || stage === "building") && (
-        <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-between px-4 sm:px-6 py-4 bg-[#F6F6F6]">
+        <div className="w-screen h-screen max-h-screen overflow-hidden flex flex-col justify-between px-4 sm:px-6 py-4 bg-[#050508] relative">
+
           {/* Header */}
-          <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-3 border-b border-[#E8E5E1]">
+          <header className="w-full max-w-4xl mx-auto flex items-center justify-between pb-3 border-b border-white/[0.06] z-10">
             <button
               type="button"
               onClick={restart}
-              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#5A5A5A] hover:text-[#B23904] bg-white border border-[#E8E5E1] px-3.5 py-1.5 rounded-full shadow-2xs cursor-pointer transition-colors"
+              className="flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[#8A8A9A] hover:text-[#60A5FA] liquid-glass-sm border border-white/[0.08] px-3.5 py-1.5 rounded-full cursor-pointer transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" /> Start over
             </button>
-            <div className="text-xs text-[#5A5A5A] font-medium">
+            <div className="text-xs text-[#8A8A9A] font-medium">
               Step {store.currentQuestion + 1} of {store.questions.length}
             </div>
           </header>
 
-          {/* Main Question Panel Container */}
-          <div className="w-full max-w-2xl mx-auto my-auto flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-140px)] py-2 pr-1">
-            <div className="p-3 bg-white border border-[#E8E5E1] rounded-xl text-xs text-[#5A5A5A] flex items-center gap-2 shadow-2xs">
-              <span className="font-semibold text-[#1A1A1A]">Project Idea:</span>
+          {/* Question Panel */}
+          <div className="w-full max-w-2xl mx-auto my-auto flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-140px)] py-2 pr-1 z-10">
+            <div className="p-3 liquid-glass-sm border border-white/[0.08] rounded-xl text-xs text-[#8A8A9A] flex items-center gap-2">
+              <span className="font-semibold text-[#F0F0F5]">Project Idea:</span>
               <span className="truncate">{store.idea}</span>
             </div>
 
-            <div className="bg-white border border-[#E8E2DD] rounded-2xl p-6 sm:p-7 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.06)]">
+            <div className="liquid-glass border border-white/[0.08] rounded-2xl p-6 sm:p-7">
               <QuestionStepper current={store.currentQuestion} total={store.questions.length} complete={inSummary} />
               {!inSummary && current ? (
                 <QuestionCard
@@ -294,9 +304,9 @@ export default function HomePage() {
                 />
               ) : (
                 <div className="answer-summary">
-                  <div className="summary-heading flex items-center gap-2 mb-4 pb-3 border-b border-[#E8E5E1]">
-                    <FileText className="w-5 h-5 text-[#EB5C00]" />
-                    <h2 className="text-lg font-bold text-[#1A1A1A]">Your product decisions</h2>
+                  <div className="summary-heading flex items-center gap-2 mb-4 pb-3 border-b border-white/[0.06]">
+                    <FileText className="w-5 h-5 text-[#60A5FA]" />
+                    <h2 className="text-lg font-bold text-[#F0F0F5]">Your product decisions</h2>
                   </div>
                   <div className="summary-list flex flex-col gap-2.5">
                     {store.questions.map((question) => {
@@ -304,9 +314,9 @@ export default function HomePage() {
                       const ids = Array.isArray(raw) ? raw : [raw];
                       const labels = ids.map((id) => question.options.find((option) => option.id === id)?.label ?? id).filter(Boolean);
                       return (
-                        <div key={question.id} className="p-3 rounded-xl bg-[#F6F6F6] border border-[#E8E5E1] flex flex-col gap-1">
-                          <span className="text-xs text-[#5A5A5A] font-medium">{question.question}</span>
-                          <strong className="text-sm text-[#1A1A1A]">{labels.join(", ")}</strong>
+                        <div key={question.id} className="p-3.5 rounded-xl liquid-glass-row border border-white/[0.06] flex flex-col gap-1">
+                          <span className="text-xs text-[#8A8A9A] font-medium">{question.question}</span>
+                          <strong className="text-sm text-[#F0F0F5]">{labels.join(", ")}</strong>
                         </div>
                       );
                     })}
@@ -314,11 +324,11 @@ export default function HomePage() {
                 </div>
               )}
 
-              {error && <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-lg">{error}</div>}
+              {error && <div className="mt-4 p-3 bg-red-500/10 border border-red-500/20 text-red-300 text-xs rounded-lg">{error}</div>}
 
-              <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#E8E5E1]">
+              <div className="flex items-center justify-between mt-6 pt-4 border-t border-white/[0.06]">
                 <button
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-[#E8E5E1] bg-white text-xs font-semibold text-[#5A5A5A] hover:text-[#1A1A1A] hover:bg-[#F6F6F6] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition-all"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl liquid-glass-sm border border-white/[0.08] text-xs font-semibold text-[#8A8A9A] hover:text-[#F0F0F5] hover:border-white/[0.15] disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed transition-all"
                   type="button"
                   onClick={() => store.setCurrentQuestion(Math.max(0, store.currentQuestion - 1))}
                   disabled={store.currentQuestion === 0 || stage === "building"}
@@ -327,7 +337,7 @@ export default function HomePage() {
                 </button>
                 {inSummary ? (
                   <button
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#FE8D01] hover:bg-[#EB5C00] text-white text-xs font-semibold shadow-md shadow-[#FE8D01]/25 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#3B82F6] text-white text-xs font-semibold shadow-[0_4px_14px_rgba(37,99,235,0.25)] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all"
                     type="button"
                     onClick={buildWorkflow}
                     disabled={stage === "building"}
@@ -337,7 +347,7 @@ export default function HomePage() {
                   </button>
                 ) : (
                   <button
-                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#FE8D01] hover:bg-[#EB5C00] text-white text-xs font-semibold shadow-md shadow-[#FE8D01]/25 disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all"
+                    className="flex items-center gap-1.5 px-5 py-2 rounded-xl bg-[#2563EB] hover:bg-[#3B82F6] text-white text-xs font-semibold shadow-[0_4px_14px_rgba(37,99,235,0.25)] disabled:opacity-50 cursor-pointer disabled:cursor-not-allowed transition-all"
                     type="button"
                     onClick={() => store.setCurrentQuestion(store.currentQuestion + 1)}
                     disabled={!answered}
@@ -349,7 +359,7 @@ export default function HomePage() {
             </div>
           </div>
 
-          <footer className="w-full text-center text-xs text-[#8E8E93] py-2">
+          <footer className="w-full text-center text-xs text-[#55556A] py-2 z-10">
             CodeWithAI Decision Architecture
           </footer>
         </div>
